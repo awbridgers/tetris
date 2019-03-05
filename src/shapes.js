@@ -7,7 +7,7 @@ const tetroArray = [
   },
   {
     name:'I',
-    shape: [[1,1],[1,1]],
+    shape: [[1],[1],[1],[1]],
     topLeft: {row:0, col: 4}},
   {
     name:'Z',

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import Canvas from './containers/canvas.js';
 import { connect } from 'react-redux';
-import { updateTetro, updateBoard } from './actions/index.js';
+import { updateTetro, updateBoard, newTetro } from './actions/index.js';
 
 class App extends Component {
   componentDidMount(){
@@ -16,17 +16,21 @@ class App extends Component {
     //with topLeft as offset so shape starts where it is on the board already
     for(let row = 0; row < tetro.shape.length; row++){
       for(let col = 0; col < tetro.shape[row].length; col++){
-        tempBoard[row + tetro.topLeft.row][col+ tetro.topLeft.col] = tetro.shape[row][col];
+        //don't add to the board if its a 0, it could overwrite an already colored square
+        if(tetro.shape[row][col]!==0){
+          tempBoard[row + tetro.topLeft.row][col+ tetro.topLeft.col] = tetro.shape[row][col];
+        }
       }
     }
     //update the board in the store
     this.props.updateBoard(tempBoard);
-    //TODO: SPAWN A NEW TETRO
+    this.props.newTetro();
   }
   moveTetro = direction => {
     //create a clone of current tetro so we can mutate it.
     let tempTetro = {...this.props.currentTetro};
     let movePiece = true;
+    let placePiece = false;
     //set a newTopLeft according to the direction the tetro should move
     switch(direction){
       case 'left':
@@ -57,7 +61,7 @@ class App extends Component {
           else if(tempTetro.newTopLeft.row + row > 15){
             movePiece = false;
             //the piece has hit the bottom of the board, and now must be added to the board array
-            this.addTetroToBoard(tempTetro)
+            placePiece = true;
 
           }
           //keep the piece from moving through other pieces
@@ -70,17 +74,21 @@ class App extends Component {
             //if the collision is due to moving down, now the piece must be added to the board
             else{
               movePiece = false;
-              this.addPieceToBoard(tempTetro);
+              placePiece = true;
               break;
             }
           }
         }
       }
     }
-    //if the piece passes through all checks with no issue, move the piece
+    //now that we are outside of the loop, we have checked every square of the tetro
+    //if the piece passed through all checks with no issue, move the piece
     if(movePiece){
       tempTetro.topLeft = tempTetro.newTopLeft;
       this.props.updateTetro(tempTetro)
+    }
+    else if (placePiece){
+      this.addTetroToBoard(tempTetro);
     }
   }
   onKeyDown = (e) => {
@@ -97,7 +105,7 @@ class App extends Component {
       case 38:
         //testing purposed only
         // this.moveTetro('up')
-        // break;
+        break;
       default:
         //do nothing
     }
@@ -113,6 +121,7 @@ class App extends Component {
 const mapDispatchToProps = dispatch =>({
   updateTetro: (tetro)=> dispatch(updateTetro(tetro)),
   updateBoard: (board)=> dispatch(updateBoard(board)),
+  newTetro: () => dispatch(newTetro()),
 })
 const mapStateToProps = state => ({
   board: state.board,
