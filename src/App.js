@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Canvas from './containers/canvas.js';
+import equals from 'array-equal';
 import { connect } from 'react-redux';
 import { updateTetro, updateBoard, newTetro } from './actions/index.js';
 
@@ -26,11 +27,99 @@ class App extends Component {
     this.props.updateBoard(tempBoard);
     this.props.newTetro();
   }
+  arrayIsEqual = (array1,shape) => {
+    let equal = true;
+    //if the lenghts are equal, we need to see if they are the same
+    if(array1.length === shape.length){
+      //if the lengths are the same, loop through and evaluate each element
+      for(let i = 0; i< array1.length; i++){
+        //if the elements are different, set equal to false
+        if(!equals(array1[i], shape[i])){
+          equal = false;
+        }
+      }
+    }
+    //if the lengths aren't equal, the arrays aren't equal
+    else{
+      equal = false;
+    }
+    return equal;
+  }
+  rotate = () => {
+    let tempTetro = {...this.props.currentTetro};
+    //find the index of the current shape in the rotations array
+    let index = tempTetro.rotations.findIndex(item =>this.arrayIsEqual(item,tempTetro.shape));
+    //if the shape is the last one in the array, go back to the first one
+    index = (index + 1 >= tempTetro.rotations.length) ? 0 : index + 1
+    //check if rotate is legal and change shape to new shape
+    tempTetro.newShape = tempTetro.rotations[index];
+    if(this.checkMove(tempTetro, 'rotate')){
+      tempTetro.shape = tempTetro.rotations[index];
+      this.props.updateTetro(tempTetro);
+    }
+  }
+  checkMove = (tempTetro, direction) => {
+    /*This function will determine if the piece can move/rotate
+      Simply by altering between newTopLeft/shape and newShape/topLeft, we can check
+      both rotate AND moves without having to write the same double for loop twice
+      with the exact same code other than the 2 variable pairs listed above*/
+    let checkArray, checkTopLeft, movePiece, placePiece;
+    movePiece = true;
+    placePiece = false;
+    //if the move is a rotate, check the new shape starting at topLeft for boundaries
+    if(direction === 'rotate'){
+      checkArray = tempTetro.newShape
+      checkTopLeft = tempTetro.topLeft
+    }
+    //if it is a directional move, check new top Left with the current shape for boundaries
+    else{
+      checkArray = tempTetro.shape
+      checkTopLeft = tempTetro.newTopLeft
+    }
+    //loop through 2d array of shape or newShape
+    for(let row = 0; row < checkArray.length; row++){
+      for(let col = 0; col < checkArray[row].length; col++){
+        if(checkArray[row][col]!== 0){
+          //keep it in bounds horizontally
+          if(checkTopLeft.col + col > 9 || checkTopLeft.col + col < 0){
+            movePiece = false;
+            break;
+          }
+          //keep it in bounds vertically
+          else if(checkTopLeft.row + row > 15){
+            movePiece = false;
+            //the piece has hit the bottom of the board, and now must be added to the board array
+            placePiece = true;
+
+          }
+          //keep the piece from moving through other pieces
+          else if(this.props.board[row+checkTopLeft.row][col+checkTopLeft.col] !== 0) {
+            //if the collision is due to moving right or left, don't move, but don't add to board either
+            if(direction === 'right' || direction === 'left'){
+              movePiece = false;
+              break;
+            }
+            //if the collision is due to moving down, now the piece must be added to the board
+            else{
+              movePiece = false;
+              placePiece = true;
+              break;
+            }
+          }
+        }
+      }
+    }
+    if(direction === 'rotate'){
+      return movePiece
+    }
+    else{
+      return {movePiece, placePiece}
+    }
+  }
   moveTetro = direction => {
     //create a clone of current tetro so we can mutate it.
     let tempTetro = {...this.props.currentTetro};
-    let movePiece = true;
-    let placePiece = false;
+
     //set a newTopLeft according to the direction the tetro should move
     switch(direction){
       case 'left':
@@ -48,46 +137,12 @@ class App extends Component {
       default:
         break;
     }
-    //loop through all the tetro blocks and make sure it can move
-    for(let row = 0; row < tempTetro.shape.length; row++){
-      for(let col = 0; col < tempTetro.shape[row].length; col++){
-        if(tempTetro.shape[row][col]!== 0){
-          //keep it in bounds horizontally
-          if(tempTetro.newTopLeft.col + col > 9 || tempTetro.newTopLeft.col + col < 0){
-            movePiece = false;
-            break;
-          }
-          //keep it in bounds vertically
-          else if(tempTetro.newTopLeft.row + row > 15){
-            movePiece = false;
-            //the piece has hit the bottom of the board, and now must be added to the board array
-            placePiece = true;
-
-          }
-          //keep the piece from moving through other pieces
-          else if(this.props.board[row+tempTetro.newTopLeft.row][col+tempTetro.newTopLeft.col] !== 0) {
-            //if the collision is due to moving right or left, don't move, but don't add to board either
-            if(direction === 'right' || direction === 'left'){
-              movePiece = false;
-              break;
-            }
-            //if the collision is due to moving down, now the piece must be added to the board
-            else{
-              movePiece = false;
-              placePiece = true;
-              break;
-            }
-          }
-        }
-      }
-    }
-    //now that we are outside of the loop, we have checked every square of the tetro
-    //if the piece passed through all checks with no issue, move the piece
-    if(movePiece){
+    const allowMove = this.checkMove(tempTetro, direction);
+    if(allowMove.movePiece){
       tempTetro.topLeft = tempTetro.newTopLeft;
       this.props.updateTetro(tempTetro)
     }
-    else if (placePiece){
+    else if (allowMove.placePiece){
       this.addTetroToBoard(tempTetro);
     }
   }
@@ -103,14 +158,15 @@ class App extends Component {
         this.moveTetro('down')
         break;
       case 38:
-        //testing purposed only
-        // this.moveTetro('up')
+        //rotate the piece
+        this.rotate();
         break;
       default:
         //do nothing
     }
   }
   render() {
+    //console.log(this.props.currentTetro.shape)
     return (
       <div ref = {(gameDiv) => this.gameDiv = gameDiv} className="App" onKeyDown = {this.onKeyDown} tabIndex = "1">
         <Canvas />

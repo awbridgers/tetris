@@ -1,6 +1,6 @@
 import tetroArray from '../shapes.js'
 
-export const currentTetro = (state = tetroArray[6], action)=>{
+export const currentTetro = (state = tetroArray[1], action)=>{
   switch(action.type){
     case 'UPDATE_TETRO':
       return action.tetro;
