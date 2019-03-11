@@ -1,10 +1,26 @@
 body{
   background: black;
 }
-.App {
+.app {
   text-align: center;
+  min-width: 1000px;
+
 }
 
 .board{
   padding-top: 10px;
+}
+
+.score{
+  color: white;
+  position: absolute;
+  top:0;
+  left: -59px;
+
+}
+.canvas{
+  margin:auto;
+  position: relative;
+  margin: auto;
+  width: 800px;
 }

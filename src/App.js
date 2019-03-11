@@ -3,7 +3,8 @@ import './App.css';
 import Canvas from './containers/canvas.js';
 import equals from 'array-equal';
 import { connect } from 'react-redux';
-import { updateTetro, updateBoard, newTetro } from './actions/index.js';
+import { updateTetro, updateBoard, newTetro, updateScore } from './actions/index.js';
+import Score from './components/score.js'
 
 class App extends Component {
   componentDidMount(){
@@ -11,14 +12,18 @@ class App extends Component {
     this.gameDiv.focus();
   }
   componentDidUpdate(){
-    //if a new piece was spawned, check to see if it hit something on spawn
     if(this.landed){
       //check for any rows to be cleared
+      //if a row doesn't have any 0,s its filled
       let newBoard = this.props.board.filter(row => row.includes(0));
       const rowsCleared = 16 - newBoard.length;
+      //add the number of removed rows to the top as 0s
       for(let i = 0; i< rowsCleared; i++){
         newBoard.unshift([0,0,0,0,0,0,0,0,0,0])
       }
+
+      //update the board and score
+      this.updateScore(rowsCleared);
       this.props.updateBoard(newBoard);
 
       //if there was a collision, the game is over
@@ -31,7 +36,27 @@ class App extends Component {
       }
     }
   }
-
+  updateScore = (rowsCleared) =>{
+    let scoreAdder = 0;
+    switch(rowsCleared){
+      case 1:
+        scoreAdder = 40;
+        break;
+      case 2:
+        scoreAdder = 100;
+        break;
+      case 3:
+        scoreAdder = 300;
+        break;
+      case 4:
+        scoreAdder = 1200;
+        break;
+      default:
+        scoreAdder = 0;
+        break;
+    }
+    this.props.updateScore(this.props.score + scoreAdder);
+  }
   addTetroToBoard = (tetro) => {
     //create a copy of the board
     let tempBoard = this.props.board.slice(0);
@@ -197,8 +222,13 @@ class App extends Component {
   render() {
     //console.log(this.props.currentTetro.shape)
     return (
-      <div ref = {(gameDiv) => this.gameDiv = gameDiv} className="App" onKeyDown = {this.onKeyDown} tabIndex = "1">
-        <Canvas />
+      <div className = 'app'>
+        <div ref = {(gameDiv) => this.gameDiv = gameDiv} className="canvas" onKeyDown = {this.onKeyDown} tabIndex = "1">
+          <Canvas />
+            <div className = 'score'>
+              <Score score = {this.props.score} />
+            </div>
+        </div>
       </div>
     );
   }
@@ -207,9 +237,11 @@ const mapDispatchToProps = dispatch =>({
   updateTetro: (tetro)=> dispatch(updateTetro(tetro)),
   updateBoard: (board)=> dispatch(updateBoard(board)),
   newTetro: () => dispatch(newTetro()),
+  updateScore: (score) => dispatch(updateScore(score))
 })
 const mapStateToProps = state => ({
   board: state.board,
-  currentTetro: state.currentTetro
+  currentTetro: state.currentTetro,
+  score: state.score
 })
 export default connect(mapStateToProps, mapDispatchToProps)(App);
