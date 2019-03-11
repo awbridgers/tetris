@@ -10,6 +10,28 @@ class App extends Component {
     //focus on the game div so the keypress function will trigger
     this.gameDiv.focus();
   }
+  componentDidUpdate(){
+    //if a new piece was spawned, check to see if it hit something on spawn
+    if(this.landed){
+      //check for any rows to be cleared
+      let newBoard = this.props.board.filter(row => row.includes(0));
+      const rowsCleared = 16 - newBoard.length;
+      for(let i = 0; i< rowsCleared; i++){
+        newBoard.unshift([0,0,0,0,0,0,0,0,0,0])
+      }
+      this.props.updateBoard(newBoard);
+
+      //if there was a collision, the game is over
+      if(!this.checkMove(this.props.currentTetro, 'spawn')){
+        console.log('Game Over!')
+        this.landed = false;
+      }
+      else{
+        this.landed = false;
+      }
+    }
+  }
+
   addTetroToBoard = (tetro) => {
     //create a copy of the board
     let tempBoard = this.props.board.slice(0);
@@ -26,6 +48,9 @@ class App extends Component {
     //update the board in the store
     this.props.updateBoard(tempBoard);
     this.props.newTetro();
+    //set landed to true to check if a collision occurs when the tetro spawns
+    this.landed = true;
+
   }
   arrayIsEqual = (array1,shape) => {
     let equal = true;
@@ -71,6 +96,10 @@ class App extends Component {
       checkArray = tempTetro.newShape
       checkTopLeft = tempTetro.topLeft
     }
+    else if(direction === 'spawn'){
+      checkArray = tempTetro.shape;
+      checkTopLeft = tempTetro.topLeft;
+    }
     //if it is a directional move, check new top Left with the current shape for boundaries
     else{
       checkArray = tempTetro.shape
@@ -109,7 +138,7 @@ class App extends Component {
         }
       }
     }
-    if(direction === 'rotate'){
+    if(direction === 'rotate' || direction === 'spawn'){
       return movePiece
     }
     else{
