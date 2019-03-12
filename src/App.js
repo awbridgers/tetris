@@ -3,8 +3,10 @@ import './App.css';
 import Canvas from './containers/canvas.js';
 import equals from 'array-equal';
 import { connect } from 'react-redux';
-import { updateTetro, updateBoard, newTetro, updateScore } from './actions/index.js';
+import { updateTetro, updateBoard, newTetro, updateScore, changeGameStatus } from './actions/index.js';
+import { startGame } from './actions/index.js'
 import Score from './components/score.js'
+import GameStart from './components/gameStart.js'
 
 class App extends Component {
   componentDidMount(){
@@ -201,22 +203,35 @@ class App extends Component {
     }
   }
   onKeyDown = (e) => {
-    switch(e.keyCode){
-      case 37:
-        this.moveTetro("left")
-        break;
-      case 39:
-        this.moveTetro('right');
-        break;
-      case 40:
-        this.moveTetro('down')
-        break;
-      case 38:
-        //rotate the piece
-        this.rotate();
-        break;
-      default:
-        //do nothing
+    e.preventDefault();
+    if(this.props.gameOn)
+      switch(e.keyCode){
+        case 37:
+          this.moveTetro("left")
+          break;
+        case 39:
+          this.moveTetro('right');
+          break;
+        case 40:
+          this.moveTetro('down')
+          break;
+        case 38:
+          //rotate the piece
+          this.rotate();
+          break;
+        default:
+          //do nothing
+      }
+  }
+  startGame = () =>{
+    if(this.props.gameStarted){
+      this.props.changeGameStatus(!this.props.gameOn)
+    }
+    else{
+      this.props.startGame(!this.props.gameStarted);
+      this.props.changeGameStatus(!this.props.gameOn);
+      this.gameDiv.focus();
+      this.props.newTetro();
     }
   }
   render() {
@@ -224,9 +239,13 @@ class App extends Component {
     return (
       <div className = 'app'>
         <div ref = {(gameDiv) => this.gameDiv = gameDiv} className="canvas" onKeyDown = {this.onKeyDown} tabIndex = "1">
+          {!this.props.gameOn && this.props.gameStarted && <h1 className = 'paused'>Game Paused</h1>}
           <Canvas />
             <div className = 'score'>
               <Score score = {this.props.score} />
+            </div>
+            <div className = 'start'>
+              <GameStart startGame = {this.startGame} gameOn = {this.props.gameOn}/>
             </div>
         </div>
       </div>
@@ -237,11 +256,15 @@ const mapDispatchToProps = dispatch =>({
   updateTetro: (tetro)=> dispatch(updateTetro(tetro)),
   updateBoard: (board)=> dispatch(updateBoard(board)),
   newTetro: () => dispatch(newTetro()),
-  updateScore: (score) => dispatch(updateScore(score))
+  updateScore: (score) => dispatch(updateScore(score)),
+  changeGameStatus: (status) => dispatch(changeGameStatus(status)),
+  startGame: (started)=> dispatch(startGame(started))
 })
 const mapStateToProps = state => ({
   board: state.board,
   currentTetro: state.currentTetro,
-  score: state.score
+  score: state.score,
+  gameOn: state.gameOn,
+  gameStarted: state.gameStarted
 })
 export default connect(mapStateToProps, mapDispatchToProps)(App);

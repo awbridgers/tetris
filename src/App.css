@@ -3,19 +3,20 @@ body{
 }
 .app {
   text-align: center;
-  min-width: 1000px;
+  min-width: 500px;
 
 }
 
 .board{
-  padding-top: 10px;
+  margin-top: 10px;
 }
 
 .score{
   color: white;
   position: absolute;
   top:0;
-  left: -59px;
+  left: 80px;
+  top: -30px;
 
 }
 .canvas{
@@ -23,4 +24,25 @@ body{
   position: relative;
   margin: auto;
   width: 800px;
+}
+.paused{
+  position: absolute;
+  left:0px;
+  right:0px;
+  margin: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  color: yellow;
+}
+.gameStart{
+  color: white;
+  position: absolute;
+  top: 0px;
+  right: 80px;
+  background: green;
+}
+.gameStart button{
+  font-size: 16px;
+  height: 50px;
+  width: 100px;
 }

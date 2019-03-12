@@ -17,7 +17,7 @@ class Canvas extends Component{
     const ctx = this.canvas.getContext('2d');
     //clear the canvas before redrawing
     ctx.clearRect(0,0,350,560)
-    //draw in the sqaures already on the board
+    //draw in the squares already on the board
     this.props.board.forEach((row,y)=>{
       row.forEach((square,x)=>{
         ctx.beginPath();
@@ -52,40 +52,41 @@ class Canvas extends Component{
       })
     })
     // now we need to color in the current tetris piece that is coming down the board
-    tetronimo.shape.forEach((row,i) =>{
-      row.forEach((square,j)=>{
-        ctx.beginPath();
-        ctx.rect((j + tetronimo.topLeft.col)*36, (i + tetronimo.topLeft.row) * 36, 35,35)
-        ctx.fillStyle = 'red';
-        if(row !==0 && square !==0){
-          //if its a tetris piece, color it in
-          if(square === 1){
-            ctx.fillStyle = '#FFFF00';
+    if(this.props.gameStarted){
+      tetronimo.shape.forEach((row,i) =>{
+        row.forEach((square,j)=>{
+          ctx.beginPath();
+          ctx.rect((j + tetronimo.topLeft.col)*36, (i + tetronimo.topLeft.row) * 36, 35,35)
+          ctx.fillStyle = 'red';
+          if(row !==0 && square !==0){
+            //if its a tetris piece, color it in
+            if(square === 1){
+              ctx.fillStyle = '#FFFF00';
+            }
+            else if (square === 2){
+              ctx.fillStyle = '#00FFFF';
+            }
+            else if (square === 3){
+              ctx.fillStyle = '#00FF00';
+            }
+            else if (square === 4){
+              ctx.fillStyle = '#FF0000';
+            }
+            else if (square === 5){
+              ctx.fillStyle = '#8000FF';
+            }
+            else if (square === 6){
+              ctx.fillStyle = '#FF8000';
+            }
+            else if (square === 7){
+              ctx.fillStyle = '#0000FF';
+            }
+            ctx.fill();
           }
-          else if (square === 2){
-            ctx.fillStyle = '#00FFFF';
-          }
-          else if (square === 3){
-            ctx.fillStyle = '#00FF00';
-          }
-          else if (square === 4){
-            ctx.fillStyle = '#FF0000';
-          }
-          else if (square === 5){
-            ctx.fillStyle = '#8000FF';
-          }
-          else if (square === 6){
-            ctx.fillStyle = '#FF8000';
-          }
-          else if (square === 7){
-            ctx.fillStyle = '#0000FF';
-          }
-          ctx.fill();
-        }
-        ctx.closePath();
+          ctx.closePath();
+        })
       })
-    })
-
+    }
   }
   render(){
     return(
@@ -97,6 +98,7 @@ class Canvas extends Component{
 }
 const mapStateToProps = state =>({
   board: state.board,
-  currentTetro: state.currentTetro
+  currentTetro: state.currentTetro,
+  gameStarted: state.gameStarted
 })
 export default connect(mapStateToProps) (Canvas)
