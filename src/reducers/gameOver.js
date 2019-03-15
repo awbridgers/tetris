@@ -1,9 +1,9 @@
-export const score = (state = 0, action) => {
+export const gameOver = (state = false, action) =>{
   switch(action.type){
-    case 'UPDATE_SCORE':
+    case 'SWITCH_GAME_OVER':
       return action.payload;
     case 'RESET_GAME':
-      return 0;
+      return false;
     default:
       return state;
   }

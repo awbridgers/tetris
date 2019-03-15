@@ -135,7 +135,7 @@ const tetroArray = [
         [0,0,7]
       ],
     ],
-    topLeft: {row:0, col: 3}
+    topLeft: {row:0, col: 4}
   }
 ]
 

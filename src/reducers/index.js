@@ -4,13 +4,15 @@ import { currentTetro } from './currentTetro.js'
 import { score } from './score.js'
 import { gameOn } from './gameStatus.js'
 import {gameStarted} from './gameStarted.js'
+import { gameOver } from './gameOver.js';
 
 const rootReducer = combineReducers({
   board,
   currentTetro,
   score,
   gameOn,
-  gameStarted
+  gameStarted,
+  gameOver
 });
 
 export default rootReducer

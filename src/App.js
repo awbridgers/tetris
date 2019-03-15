@@ -4,7 +4,7 @@ import Canvas from './containers/canvas.js';
 import equals from 'array-equal';
 import { connect } from 'react-redux';
 import { updateTetro, updateBoard, newTetro, updateScore, changeGameStatus } from './actions/index.js';
-import { startGame } from './actions/index.js'
+import { startGame, changeGameOver, resetGame } from './actions/index.js'
 import Score from './components/score.js'
 import GameStart from './components/gameStart.js'
 
@@ -30,7 +30,9 @@ class App extends Component {
 
       //if there was a collision, the game is over
       if(!this.checkMove(this.props.currentTetro, 'spawn')){
-        console.log('Game Over!')
+        //this.props.startGame(false);
+        this.props.changeGameStatus(false);
+        this.props.changeGameOver(true);
         this.landed = false;
       }
       else{
@@ -224,7 +226,10 @@ class App extends Component {
       }
   }
   startGame = () =>{
-    if(this.props.gameStarted){
+    if(this.props.gameOver){
+      this.newGame()
+    }
+    else if(this.props.gameStarted){
       this.props.changeGameStatus(!this.props.gameOn)
     }
     else{
@@ -234,12 +239,16 @@ class App extends Component {
       this.props.newTetro();
     }
   }
+  newGame = () => {
+    //reset everything back to the start
+    this.props.resetGame();
+  }
   render() {
     //console.log(this.props.currentTetro.shape)
     return (
       <div className = 'app'>
         <div ref = {(gameDiv) => this.gameDiv = gameDiv} className="canvas" onKeyDown = {this.onKeyDown} tabIndex = "1">
-          {!this.props.gameOn && this.props.gameStarted && <h1 className = 'paused'>Game Paused</h1>}
+          {!this.props.gameOn && this.props.gameStarted &&  <h1 className = 'paused'>{`${this.props.gameOver ? 'Game Over': 'Game Paused'}`}</h1>}
           <Canvas />
             <div className = 'score'>
               <Score score = {this.props.score} />
@@ -258,13 +267,16 @@ const mapDispatchToProps = dispatch =>({
   newTetro: () => dispatch(newTetro()),
   updateScore: (score) => dispatch(updateScore(score)),
   changeGameStatus: (status) => dispatch(changeGameStatus(status)),
-  startGame: (started)=> dispatch(startGame(started))
+  startGame: (started)=> dispatch(startGame(started)),
+  changeGameOver: (gameOver) => dispatch(changeGameOver(gameOver)),
+  resetGame: () => dispatch(resetGame()),
 })
 const mapStateToProps = state => ({
   board: state.board,
   currentTetro: state.currentTetro,
   score: state.score,
   gameOn: state.gameOn,
-  gameStarted: state.gameStarted
+  gameStarted: state.gameStarted,
+  gameOver: state.gameOver,
 })
 export default connect(mapStateToProps, mapDispatchToProps)(App);

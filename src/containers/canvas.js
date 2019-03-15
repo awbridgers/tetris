@@ -99,6 +99,7 @@ class Canvas extends Component{
 const mapStateToProps = state =>({
   board: state.board,
   currentTetro: state.currentTetro,
-  gameStarted: state.gameStarted
+  gameStarted: state.gameStarted,
+  gameOver: state.gameOver
 })
 export default connect(mapStateToProps) (Canvas)

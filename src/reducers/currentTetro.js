@@ -6,6 +6,8 @@ export const currentTetro = (state = [], action)=>{
       return action.tetro;
     case 'SPAWN_TETRO':
       return tetroArray[Math.floor(Math.random()*tetroArray.length)];
+    case 'RESET_GAME':
+      return tetroArray[Math.floor(Math.random()*tetroArray.length)];
     default:
       return state;
   }

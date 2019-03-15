@@ -32,7 +32,8 @@ body{
   margin: auto;
   top: 50%;
   transform: translateY(-50%);
-  color: yellow;
+  color: white;
+  -webkit-text-stroke: 2px black;
 }
 .gameStart{
   color: white;

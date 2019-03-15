@@ -28,3 +28,12 @@ export const startGame = started =>({
   type: 'START_GAME',
   payload: started
 })
+
+export const changeGameOver = gameOver => ({
+  type: 'SWITCH_GAME_OVER',
+  payload: gameOver
+})
+
+export const resetGame = () => ({
+  type: 'RESET_GAME'
+})
