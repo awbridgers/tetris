@@ -4,19 +4,19 @@ self.__precacheManifest = [
     "url": "/tetris/static/js/runtime~main.18d269b3.js"
   },
   {
-    "revision": "d368cedb6e29f22b76a6",
-    "url": "/tetris/static/js/main.d368cedb.chunk.js"
+    "revision": "634c67c704d81404a5d4",
+    "url": "/tetris/static/js/main.634c67c7.chunk.js"
   },
   {
     "revision": "31989cf2ca2c1687d3dd",
     "url": "/tetris/static/js/2.31989cf2.chunk.js"
   },
   {
-    "revision": "d368cedb6e29f22b76a6",
-    "url": "/tetris/static/css/main.3e72da0d.chunk.css"
+    "revision": "634c67c704d81404a5d4",
+    "url": "/tetris/static/css/main.59481b1e.chunk.css"
   },
   {
-    "revision": "11a9d9591ce0935265a67b7501089883",
+    "revision": "bb609bc67204da76ab82c46d42f3bd5f",
     "url": "/tetris/index.html"
   }
 ];
