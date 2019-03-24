@@ -5,6 +5,7 @@ import { score } from './score.js'
 import { gameOn } from './gameStatus.js'
 import {gameStarted} from './gameStarted.js'
 import { gameOver } from './gameOver.js';
+import { date } from './date.js';
 
 const rootReducer = combineReducers({
   board,
@@ -12,7 +13,8 @@ const rootReducer = combineReducers({
   score,
   gameOn,
   gameStarted,
-  gameOver
+  gameOver,
+  date
 });
 
 export default rootReducer

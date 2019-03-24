@@ -3,27 +3,21 @@ body{
 }
 .app {
   text-align: center;
-  min-width: 500px;
-
-}
-
-.board{
-  margin-top: 10px;
+  color: white;
 }
 
 .score{
   color: white;
   position: absolute;
-  top:0;
   left: 80px;
-  top: -30px;
-
+  /* background: blue; */
+  top:0px;
 }
 .canvas{
-  margin:auto;
   position: relative;
-  margin: auto;
-  width: 800px;
+  margin-top: 10px;
+  text-align: center;
+  /* background: green; */
 }
 .paused{
   position: absolute;
@@ -35,15 +29,75 @@ body{
   color: white;
   -webkit-text-stroke: 2px black;
 }
-.gameStart{
+.start{
   color: white;
   position: absolute;
   top: 0px;
   right: 80px;
-  background: green;
+  /* background: red; */
 }
 .gameStart button{
   font-size: 16px;
   height: 50px;
   width: 100px;
+}
+.points{
+  margin-top: -30px;
+}
+@media only screen and (max-width: 1024px){
+
+  .score{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+  }
+  .start{
+    position: absolute;
+    right:0px;
+    margin: auto;
+  }
+  .gameStart button{
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+    height:50px;
+    width:60px;
+    background: white;
+    padding: 0px;
+  }
+  .points{
+    margin-top:0px;
+  }
+  .points h1{
+    font-size: 20px;
+  }
+  .points h2{
+    font-size: 16px;
+  }
+  .controlDiv{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: -20px;
+  }
+  .left button, .right button, .middle button{
+    font-size: 30px;
+    font-weight: bold;
+    height: 75px;
+    width: 75px;
+    text-align: center;
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+    background: white;
+    padding: 0px;
+  }
+  .middle button{
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+  .middle {
+    display: flex;
+    flex-direction: column;
+    margin: 10px;
+  }
 }

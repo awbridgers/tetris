@@ -9,9 +9,10 @@ export const updateTetro = tetro =>({
   tetro: tetro
 })
 
-export const updateBoard = board =>({
+export const updateBoard = (board,spawn) =>({
   type: 'UPDATE_BOARD',
-  payload: board
+  payload: board,
+  spawn
 })
 
 export const updateScore = score => ({
@@ -36,4 +37,9 @@ export const changeGameOver = gameOver => ({
 
 export const resetGame = () => ({
   type: 'RESET_GAME'
+})
+
+export const updateDate = (date) =>({
+  type: 'UPDATE_DATE',
+  payload: date
 })
