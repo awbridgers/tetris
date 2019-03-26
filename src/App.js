@@ -114,7 +114,8 @@ class App extends Component {
     return true;
   }
   rotate = () => {
-    let tempTetro = {...this.props.currentTetro};
+    let tempTetro = {...this.props.currentTetro,
+      topLeft: this.props.currentTetro.topLeft};
     //find the index of the current shape in the rotations array
     let index = tempTetro.rotations.findIndex(item =>this.arrayIsEqual(item,tempTetro.shape));
     //if the shape is the last one in the array, go back to the first one, else go to the next shape
@@ -181,7 +182,8 @@ class App extends Component {
   }
   moveTetro = direction => {
     //create a clone of current tetro so we can mutate it.
-    let tempTetro = {...this.props.currentTetro};
+    let tempTetro = {...this.props.currentTetro,
+      topLeft: this.props.currentTetro.topLeft};
 
     //set a newTopLeft according to the direction the tetro should move
     switch(direction){
